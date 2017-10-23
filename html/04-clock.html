@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>时钟</title>
+</head>
+<body>
+  <canvas id="myCanvas" width="600" height="600" style="border:1px solid #c3c3c3;">
+    您的浏览器不支持 HTML5 canvas 标签。</canvas>
+
+  <script>
+    function clock(){
+      var now = new Date();
+      var ctx = document.getElementById('myCanvas').getContext('2d');
+      ctx.save();
+      ctx.clearRect(0,0,600,600);    //清空画布
+	    ctx.translate(300,300);        //平移
+	    ctx.scale(1.8,1.8);            //放大1.8倍  
+	    ctx.rotate(-Math.PI/2);          //指针们逆时针旋转90度
+      ctx.strokeStyle = "black";     //刻度盘线条颜色
+      ctx.fillStyle = "white";       //填充颜色
+      ctx.lineWidth = 8;             //线条宽度
+      ctx.lineCap = "round";         //线条末端线帽形式
+
+      //时刻度
+      ctx.save();          
+      for (var i=0;i<12;i++){
+        ctx.beginPath();
+        ctx.rotate(Math.PI/6);       //时刻度顺时针旋转30度
+        ctx.moveTo(100,0);           //画笔移动到（100,0）
+        ctx.lineTo(120,0);           //画到（120,0）处
+        ctx.stroke();
+      }
+      ctx.restore();
+
+      //分刻度
+      ctx.save();
+      ctx.lineWidth = 5;      //线条宽度
+      for (i=0;i<60;i++){
+        if (i%5!=0) {             //除了为时刻度之外的所有分刻度   
+          ctx.beginPath();
+          ctx.moveTo(117,0);      //画笔移到（117,0,）
+          ctx.lineTo(120,0);       //画到（120,0）处
+          ctx.stroke();
+        }
+        ctx.rotate(Math.PI/30);          //顺时针旋转6度
+      }
+      ctx.restore();
+   
+      var sec = now.getSeconds();     //获取现在时间
+      var min = now.getMinutes();
+      var hr  = now.getHours();
+      hr = hr>=12 ? hr-12 : hr;      //超过12小时时，减12   
+
+      ctx.fillStyle = "black";
+
+      //画时指针
+      ctx.save();          //压入栈中
+      ctx.rotate( hr*(Math.PI/6) + (Math.PI/360)*min + (Math.PI/21600)*sec );   
+      ctx.lineWidth = 14;        //线条宽度14
+      ctx.beginPath();
+      ctx.moveTo(-20,0);         //从（-20,0）画到（80,0）处
+      ctx.lineTo(80,0);
+      ctx.stroke();
+      ctx.restore();          //从栈顶弹出
+
+      //画分指针
+      ctx.save();
+      ctx.rotate( (Math.PI/30)*min + (Math.PI/1800)*sec );
+      ctx.lineWidth = 10;       //线条宽度10
+      ctx.beginPath();
+      ctx.moveTo(-28,0);       //从（-28,0）画到（112,0）处
+      ctx.lineTo(112,0);
+      ctx.stroke();
+      ctx.restore();
+   
+      //画秒指针
+      ctx.save();
+      ctx.rotate(sec * Math.PI/30);
+      ctx.strokeStyle = "#D40000";      //线条颜色
+      ctx.fillStyle = "#D40000";           //填充颜色
+      ctx.lineWidth = 6;                //线条宽度6
+      ctx.beginPath();
+      ctx.moveTo(-30,0);          //从（-30,0）画到（83,0,）处
+      ctx.lineTo(83,0); 
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(0,0,10,0,Math.PI*2,true);      //半径为10的圆
+      ctx.fill();             //填充
+      ctx.beginPath();
+      ctx.arc(95,0,10,0,Math.PI*2,true);     //圆点（95,0）处画半径为10的圆
+      ctx.stroke();
+      ctx.fillStyle = "rgba(0,0,0,0)";  
+      ctx.arc(0,0,3,0,Math.PI*2,true);    //半径为3的透明圆
+      ctx.fill();
+      ctx.restore();
+
+      ctx.beginPath();
+      ctx.lineWidth = 14;          //外圈
+      ctx.strokeStyle ='lightblue';
+      ctx.arc(0,0,142,0,Math.PI*2,true);
+      ctx.stroke();
+
+      ctx.restore();
+
+      window.requestAnimationFrame(clock);
+    }
+
+    window.requestAnimationFrame(clock);
+    
+  </script>
+</body>

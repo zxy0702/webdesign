@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>左右滑动的全景图</title>
+</head>
+<body>
+  <canvas id="myCanvas" width="800" height="600" style="border:1px solid #c3c3c3;">
+    您的浏览器不支持 HTML5 canvas 标签。</canvas>
+	<audio controls="controls" autoplay="autoplay">
+		<source src="七月上.mp3"></source>
+	</audio>
+
+	<script>
+		var img = new Image();      //创建一个img元素
+		
+		img.src = '../images/zuzhibu.jpg';   //设置图片原地址
+		var CanvasXSize = 800;
+		var CanvasYSize = 600;
+		var speed = 30;   //数值越低，图片滑动越快
+		var scale = 1.05;
+		var y = -4.5;    //垂直偏移
+		
+		// Main program
+		
+		var dx = 0.75;
+		var imgW;
+		var imgH;
+		var x = 0;
+		var clearX;
+		var clearY;
+		var ctx;
+		
+		img.onload = function() {
+		    imgW = img.width*scale;
+		    imgH = img.height*scale;
+		    if (imgW > CanvasXSize) { x = CanvasXSize-imgW; }  // 照片宽度大于画布宽度时
+		    if (imgW > CanvasXSize) { clearX = imgW; } // 照片大于画布时
+		    else { clearX = CanvasXSize; }             //照片小于等于画布时
+		    if (imgH > CanvasYSize) { clearY = imgH; } // 照片高度大于画布高度时
+		    else { clearY = CanvasYSize; }
+		    //获取Canvas元素
+		    ctx = document.getElementById('myCanvas').getContext('2d');
+		    //设置刷新频率
+		    return setInterval(draw, speed);
+		}
+		
+		function draw() {
+		    //清除画布区域
+		    ctx.clearRect(0,0,clearX,clearY);
+		    //当图片<=画布时
+		    if (imgW <= CanvasXSize) {
+		        //从头开始重画
+		        if (x > (CanvasXSize)) { x = 0; }
+		        //画添加图片
+		        if (x > (CanvasXSize-imgW)) { ctx.drawImage(img,x-CanvasXSize+1,y,imgW,imgH); }
+		    }
+		    //当图片>画布时
+		    else {
+		        //从头开始重画
+		        if (x > (CanvasXSize)) { x = CanvasXSize-imgW; }
+		        //画添加图片
+		        if (x > (CanvasXSize-imgW)) { ctx.drawImage(img,x-imgW+1,y,imgW,imgH); }
+		    }
+		    //画图片
+		    ctx.drawImage(img,x,y,imgW,imgH);
+		    //移动
+		    x += dx;
+		}
+	</script>
+
+</body>
